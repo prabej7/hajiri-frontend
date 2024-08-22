@@ -5,23 +5,29 @@ import { Button } from "@/components/ui/button";
 
 import AccountSection from "@/components/user/AccountSection";
 import Loading from "@/components/user/Loading";
-import DayTable from "@/constants/types/dayTable";
+
 import TableType from "@/constants/types/table";
-import url from "@/constants/url";
+
 import useApi from "@/hooks/useApi";
 import { useUser } from "@/Providers/UserContext";
-import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import CreateDayTable from "@/components/user/CreateDayTableDialogue";
 import { VscListFilter } from "react-icons/vsc";
 import { Calendar } from "@/components/ui/calendar";
+import Alert from "@/components/user/Alert";
+import { MdOutlinePlaylistAdd } from "react-icons/md";
+import axios, { AxiosError } from "axios";
+import url from "@/constants/url";
 interface Toggle {
   add: boolean;
   delete: boolean;
 }
 
 const Table: React.FC = () => {
+  const [msg, setMsg] = useState<string>("");
+  const [mainTable, setMainTable] = useState<TableType>();
   const { user, isLoading } = useUser();
   const { tableid } = useParams();
   const [table, setTable] = useState<TableType | undefined>(undefined);
@@ -33,11 +39,30 @@ const Table: React.FC = () => {
     delete: false,
   });
 
-  useEffect(() => {
-    if (user) {
-      const t = user.tables.find((table) => table._id === tableid);
-      setTable(t);
+  const fetchTableOfToday = async () => {
+    setMsg("");
+    try {
+      const response = await post("get-day-table", {
+        tableid: tableid,
+        date: date?.toLocaleDateString(),
+      });
+      setTable(response.data);
+    } catch (e) {
+      setMsg("There is no table for today.");
     }
+  };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await axios.get(`${url}get-tables/${tableid}`);
+        setMainTable(response.data);
+        fetchTableOfToday();
+      } catch (e) {
+        const error = e as AxiosError;
+        console.log(error.response?.data);
+      }
+    })();
   }, [tableid, user]);
 
   const toggleForm = (name: keyof Toggle) => {
@@ -51,7 +76,6 @@ const Table: React.FC = () => {
     window.location.reload();
   };
 
-
   const handleSelect = async (date: Date) => {
     setDate(date);
     setDatePicker(false);
@@ -63,6 +87,7 @@ const Table: React.FC = () => {
       setTable(response.data);
     } catch (e) {}
   };
+
   if (isLoading) return <Loading />;
 
   return (
@@ -82,9 +107,12 @@ const Table: React.FC = () => {
       titleElement={
         <div className="flex gap-3">
           <div>
-            {table?.attendees && table?.attendees.length > 0 && (
-              <CreateDayTable tableid={tableid} />
-            )}
+            <CreateDayTable
+              disable={
+                table?.attendees && table?.attendees.length > 0 ? false : true
+              }
+              tableid={tableid}
+            />
           </div>
           {!toggle.delete ? (
             <DropDown
@@ -116,7 +144,18 @@ const Table: React.FC = () => {
         />
       )}
 
-      <List table={table} isDelete={toggle.delete} />
+      <List table={table ? table : mainTable} isDelete={toggle.delete} />
+      {msg && (
+        <p className="text-center mt-12 flex flex-col items-center gap-3 justify-center">
+          {msg && msg}
+          <CreateDayTable
+            disable={
+              table?.attendees && table?.attendees.length > 0 ? true : false
+            }
+            tableid={tableid}
+          />
+        </p>
+      )}
     </AccountSection>
   );
 };

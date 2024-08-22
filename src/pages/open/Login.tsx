@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import useApi from "@/hooks/useApi";
 import { useCookies } from "react-cookie";
 
+
 const Login: React.FC = () => {
   const schema = z.object({
     email: z.string().min(1, {
@@ -67,6 +68,7 @@ const Login: React.FC = () => {
           Don't have an account ? <Link to="/register">Register</Link>
         </p>
       </div>
+      
     </Section>
   );
 };

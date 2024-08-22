@@ -10,6 +10,8 @@ import { Outlet } from "react-router-dom";
 import TablePageLayout from "./pages/account/TablesPage/TablePageLayout";
 import Table from "./pages/account/TablesPage/Table";
 import Alert from "@/components/user/Alert";
+import Stats from "./pages/account/stats/Statistics";
+import Setting from "./pages/account/Setting";
 function DashboardLayout() {
   return (
     <div>
@@ -32,6 +34,8 @@ function App() {
             <Route index element={<TablesPage />} />
             <Route path=":tableid" element={<Table />} />
           </Route>
+          <Route path="stats" element={<Stats />} />
+          <Route path="setting" element={<Setting />} />
         </Route>
       </Routes>
       <ToastContainer />

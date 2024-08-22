@@ -15,10 +15,11 @@ import useApi from "@/hooks/useApi";
 
 interface Props {
   tableid?: string;
+  disable: boolean;
 }
 
-const CreateDayTable: React.FC<Props> = ({ tableid }) => {
-  const [date, setDate] = useState<Date>();
+const CreateDayTable: React.FC<Props> = ({ tableid, disable }) => {
+  const [date, setDate] = useState<Date>(new Date());
   const { post } = useApi();
 
   const handleSubmit = async () => {
@@ -34,7 +35,7 @@ const CreateDayTable: React.FC<Props> = ({ tableid }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="flex items-center gap-1 scale-90">
+        <Button className="flex items-center gap-1 scale-90" disabled={disable}>
           <MdOutlinePlaylistAdd className="text-2xl" />
           <p>Create</p>
         </Button>

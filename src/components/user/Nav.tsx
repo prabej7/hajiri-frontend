@@ -22,7 +22,7 @@ const Nav: React.FC<Props> = ({ children }) => {
   };
 
   const handleLogout = () => {
-    removeCookie("token", { path: "/" });
+    removeCookie("token");
   };
 
   return (
@@ -70,7 +70,7 @@ const Nav: React.FC<Props> = ({ children }) => {
               <p>Statistics</p>
             </Link>
             <Link
-              to="/account//setting/"
+              to="/account/setting/"
               className="flex items-center gap-3 hover:pl-3 transition-all cursor-pointer"
             >
               <IoMdSettings className="text-xl" />

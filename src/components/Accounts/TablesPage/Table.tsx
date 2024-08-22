@@ -42,10 +42,15 @@ const Table: React.FC<Props> = ({ isDelete, table }) => {
   }, [table]);
 
   const handleUpdate = async (id: string) => {
+    if (table?.name) return;
     try {
-      await post("update-presence", {
+      const now = new Date();
+      const response = await post("update-presence", {
         attendeeid: id,
+        date: now.toLocaleDateString(),
+        tableid: table?._id,
       });
+      console.log(response);
       setAttendees((prev) =>
         prev.map((attendee) =>
           attendee._id === id
@@ -63,7 +68,6 @@ const Table: React.FC<Props> = ({ isDelete, table }) => {
 
   return (
     <T>
-      <TableCaption>Recently used table.</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead className="w-[100px]">Name</TableHead>

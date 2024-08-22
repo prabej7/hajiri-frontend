@@ -8,12 +8,15 @@ import { Button } from "@/components/ui/button";
 const TablesPage: React.FC = () => {
   const [isAdd, setAddShow] = useState<boolean>(false);
   const [isDel, setDelShow] = useState<boolean>(false);
+  
   const addTableClick = () => {
     setAddShow(true);
   };
+
   const deleteTableClick = () => {
     setDelShow(true);
   };
+
   return (
     <AccountSection
       title="Tables"
@@ -36,6 +39,7 @@ const TablesPage: React.FC = () => {
     >
       <AddTableForm open={isAdd} onClose={() => setAddShow(!isAdd)} />
       <TablesList isDelete={isDel} />
+      
     </AccountSection>
   );
 };
