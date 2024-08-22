@@ -7,9 +7,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useApi from "@/hooks/useApi";
 import { useCookies } from "react-cookie";
-
+import { FaEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
+import { useState } from "react";
+import { AxiosError } from "axios";
 
 const Login: React.FC = () => {
+  const [showPass, setShowPass] = useState<boolean>(false);
   const schema = z.object({
     email: z.string().min(1, {
       message: "Field is required.",
@@ -39,8 +43,17 @@ const Login: React.FC = () => {
       setCookie("token", response.data.token, { expires: threeMonthsFromNow });
       navigate("/account");
     } catch (e) {
+      const error = e as AxiosError;
+      if (error.response?.status !== 500) {
+        return setError("root", {
+          message: "Either email or password in wrong!",
+        });
+      }
       setError("root", { message: "Something went wrong!" });
     }
+  };
+  const togglePass = () => {
+    setShowPass(!showPass);
   };
   return (
     <Section>
@@ -54,21 +67,41 @@ const Login: React.FC = () => {
           {errors.email && (
             <p className="text-red-500">{errors.email.message}</p>
           )}
-          <Input
-            placeholder="Password"
-            type="password"
-            {...register("password")}
-          />
+          <div className="relative">
+            <Input
+              placeholder="Password"
+              type={showPass ? "text" : "password"}
+              {...register("password")}
+            />
+
+            {showPass ? (
+              <FaEye
+                className="absolute z-10 top-[10px] right-4 cursor-pointer"
+                onClick={togglePass}
+              />
+            ) : (
+              <FaEyeSlash
+                className="absolute z-10 top-[10px] right-4 cursor-pointer"
+                onClick={togglePass}
+              />
+            )}
+          </div>
+
           {errors.password && (
             <p className="text-red-500">{errors.password.message}</p>
           )}
-          <Button disabled={isSubmitting}>Register</Button>
+          <Button disabled={isSubmitting}>Login</Button>
         </form>
-        <p className="text-sm">
-          Don't have an account ? <Link to="/register">Register</Link>
+        <p className="text-center text-sm mt-2">
+          Forgot password ?<Link to="/forgot-password"> Click here !</Link>
+        </p>
+        <div className="border w-44"></div>
+        <p className="text-sm ">
+          <Button variant="link" onClick={() => navigate("/register")}>
+            Create an account
+          </Button>
         </p>
       </div>
-      
     </Section>
   );
 };

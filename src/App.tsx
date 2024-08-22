@@ -12,6 +12,9 @@ import Table from "./pages/account/TablesPage/Table";
 import Alert from "@/components/user/Alert";
 import Stats from "./pages/account/stats/Statistics";
 import Setting from "./pages/account/Setting";
+import ForgotPass from "./pages/open/Forgot Password/forgotPass";
+import VerifyOTP from "./pages/open/Forgot Password/OTP";
+import ChangePassword from "./pages/open/Forgot Password/ChangePassword";
 function DashboardLayout() {
   return (
     <div>
@@ -37,6 +40,9 @@ function App() {
           <Route path="stats" element={<Stats />} />
           <Route path="setting" element={<Setting />} />
         </Route>
+        <Route path="/forgot-password" element={<ForgotPass />} />
+        <Route path="/verify-otp" element={<VerifyOTP />} />
+        <Route path="/change-password" element={<ChangePassword />} />
       </Routes>
       <ToastContainer />
     </>

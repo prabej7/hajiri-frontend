@@ -7,6 +7,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useApi from "@/hooks/useApi";
 import { useCookies } from "react-cookie";
+import { FaEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
+import { useState } from "react";
 
 const schema = z.object({
   email: z.string().min(1, {
@@ -20,6 +23,7 @@ const schema = z.object({
 type formFields = z.infer<typeof schema>;
 
 const Register: React.FC = () => {
+  const [showPass, setShowPass] = useState<boolean>(false);
   const [_, setCookie] = useCookies(["token"]);
   const navigate = useNavigate();
   const { post } = useApi();
@@ -43,7 +47,9 @@ const Register: React.FC = () => {
       setError("root", { message: "Something went wrong!" });
     }
   };
-
+  const togglePass = () => {
+    setShowPass(!showPass);
+  };
   return (
     <Section>
       <div className="flex justify-center items-center h-screen flex-col gap-3">
@@ -56,11 +62,24 @@ const Register: React.FC = () => {
           {errors.email && (
             <p className="text-red-500">{errors.email.message}</p>
           )}
-          <Input
-            placeholder="Password"
-            type="password"
-            {...register("password")}
-          />
+          <div className="relative">
+            <Input
+              placeholder="Password"
+              type={showPass ? "text" : "password"}
+              {...register("password")}
+            />
+            {showPass ? (
+              <FaEye
+                className="absolute z-10 top-[10px] right-4 cursor-pointer"
+                onClick={togglePass}
+              />
+            ) : (
+              <FaEyeSlash
+                className="absolute z-10 top-[10px] right-4 cursor-pointer"
+                onClick={togglePass}
+              />
+            )}
+          </div>
           {errors.password && (
             <p className="text-red-500">{errors.password.message}</p>
           )}
